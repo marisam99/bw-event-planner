@@ -50,13 +50,12 @@
    - Validate formatting, formulas, multi-sheet structure
 
 #### Tasks:
-- [ ] Set up project directory structure (config, R, inputs, outputs, tests)
+- [ ] Set up project directory structure (config, R, outputs, tests)
 - [ ] Create config/dependencies.R with all required packages
 - [ ] Create config/settings.R with API configuration and prompt templates
 - [ ] Create .Renviron file for API key storage (git-ignored)
 - [ ] Build R/api_client.R to connect to OpenAI ChatGPT 5.1 API
 - [ ] Build R/template_processor.R to read and validate Excel templates
-- [ ] Create 1-2 example Excel templates (conference, workshop)
 - [ ] Build R/worksheet_generator.R with core generation logic
 - [ ] Build R/output_formatter.R to format and export Excel
 - [ ] Develop prompt engineering strategy for template expansion
