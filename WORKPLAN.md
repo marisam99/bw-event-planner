@@ -49,11 +49,20 @@
    - Verify Excel input/output workflow works end-to-end
    - Validate formatting, formulas, multi-sheet structure
 
-#### Success Criteria:
-- Core functions can take Excel template + event details and generate expanded Excel worksheet
-- Output strictly follows the template structure provided
-- Error handling is robust and informative
-- Code follows all documented standards (tidyverse, clear naming, section structure)
+#### Tasks:
+- [ ] Set up project directory structure (config, R, inputs, outputs, tests)
+- [ ] Create config/dependencies.R with all required packages
+- [ ] Create config/settings.R with API configuration and prompt templates
+- [ ] Create .Renviron file for API key storage (git-ignored)
+- [ ] Build R/api_client.R to connect to OpenAI ChatGPT 5.1 API
+- [ ] Build R/template_processor.R to read and validate Excel templates
+- [ ] Create 1-2 example Excel templates (conference, workshop)
+- [ ] Build R/worksheet_generator.R with core generation logic
+- [ ] Build R/output_formatter.R to format and export Excel
+- [ ] Develop prompt engineering strategy for template expansion
+- [ ] Create test script to verify end-to-end workflow
+- [ ] Test with multiple template variations
+- [ ] Document code following standards (headers, sections, comments)
 
 ---
 
@@ -87,11 +96,22 @@
    - Responsive layout
    - Bellwether branding (optional)
 
-#### Success Criteria:
-- Nontechnical user can upload template, fill in details, and download completed worksheet
-- Interface is intuitive without requiring documentation
-- Errors are displayed clearly with actionable guidance
-- App runs locally without issues
+#### Tasks:
+- [ ] Create app.R file with basic Shiny structure
+- [ ] Design UI layout with sections for upload, inputs, and output
+- [ ] Add file upload widget for Excel templates
+- [ ] Add input fields (event name, date, attendee count, budget range, event type)
+- [ ] Add generate button with appropriate styling
+- [ ] Add download button for completed worksheets
+- [ ] Implement file upload handler and Excel validation
+- [ ] Implement input validation with user-friendly feedback
+- [ ] Connect UI to backend functions from Phase 1
+- [ ] Add progress indicators during AI generation
+- [ ] Implement error handling for API failures
+- [ ] Implement error handling for invalid uploads
+- [ ] Add styling with bslib or shinydashboard
+- [ ] Test locally with example templates and inputs
+- [ ] Verify download functionality works correctly
 
 ---
 
@@ -128,11 +148,25 @@
    - Optional comments/suggestions
    - Log usage for improvement insights
 
-#### Success Criteria:
-- Users can generate plans for 5+ event types using templates
-- Output requires minimal manual editing
-- Excel worksheets are professionally formatted and immediately usable
-- 80%+ user satisfaction rating
+#### Tasks:
+- [ ] Create pre-loaded template library (conference, workshop, virtual event, networking event)
+- [ ] Add UI option to select from library OR upload custom template
+- [ ] Implement template preview functionality
+- [ ] Enhance event type dropdown with descriptions
+- [ ] Replace text input with date picker for event date
+- [ ] Add budget slider or range input widget
+- [ ] Add optional fields (venue type, audience, special requirements)
+- [ ] Add tooltips/help text for each input field
+- [ ] Implement conditional formatting in Excel output (deadlines, budget)
+- [ ] Add auto-calculated formulas (budget totals, days until deadline)
+- [ ] Enhance Excel styling (headers, colors, fonts)
+- [ ] Add metadata sheet with generation details
+- [ ] (Optional) Add in-app preview of generated worksheet
+- [ ] (Optional) Add option to regenerate specific sections
+- [ ] (Optional) Add custom instructions field for additional AI guidance
+- [ ] (Optional) Add satisfaction rating after generation
+- [ ] (Optional) Add comments/suggestions collection
+- [ ] (Optional) Implement usage logging
 
 ---
 
@@ -214,78 +248,6 @@ AI assists but doesn't replace human judgment:
 - **API key security**: Use .Renviron (git-ignored), clear setup instructions
 - **Data retention**: Understand and document AI provider's data policies
 - **File uploads**: Ensure uploaded files aren't permanently stored on server
-
----
-
-## Success Metrics
-
-### Phase 1
-- Backend functions successfully generate Excel output from template + inputs
-- Output includes proper formatting and multiple sheets
-- Zero errors in test cases
-- Code passes manual review for standards compliance
-
-### Phase 2
-- Nontechnical user can complete workflow in < 5 minutes
-- No crashes or unhandled errors during normal use
-- Generated worksheet downloads successfully
-- Interface is self-explanatory (no documentation needed for basic use)
-
-### Phase 3
-- Support 5+ event types with pre-loaded templates
-- 80% of users rate output as "immediately usable" or "needs minor edits"
-- Excel output requires minimal post-generation formatting
-- Users report 30%+ time savings vs. manual planning
-
----
-
-## Timeline Estimate
-
-**Phase 1: Backend Core Functionality**: 2-3 weeks
-- Week 1: Project setup, API integration, Excel template system
-- Week 2: Core generation logic, prompt engineering, output formatting
-- Week 3: Testing with scripts, refinement, documentation
-
-**Phase 2: Basic Shiny Interface**: 2-3 weeks
-- Week 1: UI layout, file upload/download, input forms
-- Week 2: Server logic, error handling, progress indicators
-- Week 3: Testing, styling, polish
-
-**Phase 3: Enhanced UX & Features**: 2-4 weeks
-- Weeks 1-2: Template library, improved inputs, better formatting
-- Weeks 3-4: Optional features (preview, refinement), testing, user feedback
-
-**Total**: 6-10 weeks for complete build (assuming one person part-time)
-
-**Minimum Viable Product**: Phase 1 + basic Phase 2 (4-5 weeks)
-
----
-
-## Next Steps
-
-### Immediate Actions (Before Phase 1)
-1. **Research & Requirements**
-   - Review 3-5 existing event planning templates (gather from team)
-   - Interview 2-3 potential users about their current workflow and pain points
-   - Evaluate AI model options (cost, capability, terms of service)
-
-2. **Technical Decisions**
-   - Select AI provider and model (Anthropic Claude vs OpenAI GPT-4)
-   - Confirm openxlsx for Excel handling (supports formatting)
-   - Decide on Shiny UI framework (bslib vs shinydashboard)
-
-3. **Setup**
-   - Get API key for chosen AI provider
-   - Create .Renviron template with placeholder
-   - Create sample Excel event template with expected structure
-   - Draft example prompts for AI
-
-### Questions to Answer
-- What's the typical event planning timeline? (12 weeks? 6 months?)
-- What are the most common event types at Bellwether?
-- Are there existing event planning templates to digitize/reference?
-- What budget/volume are we targeting? (affects API cost strategy)
-- Will this be deployed on a server or just run locally?
 
 ---
 
