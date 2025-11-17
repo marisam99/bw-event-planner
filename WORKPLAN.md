@@ -39,7 +39,7 @@
    - Create 1-2 example templates (conference, workshop)
 
 4. **AI Integration**
-   - Connect to AI API (Anthropic Claude recommended)
+   - Connect to OpenAI API (ChatGPT 5.1)
    - Implement prompt engineering to expand template items with context
    - Pass event details (name, date, attendee count, budget, type) to personalize output
    - Handle API errors gracefully with fallback messages
@@ -51,7 +51,7 @@
 
 #### Success Criteria:
 - Core functions can take Excel template + event details and generate expanded Excel worksheet
-- Output includes multiple sheets (Overview, Timeline, Budget, Logistics)
+- Output strictly follows the template structure provided
 - Error handling is robust and informative
 - Code follows all documented standards (tidyverse, clear naming, section structure)
 
@@ -149,10 +149,8 @@
 - **shinyWidgets** - Enhanced input widgets (optional)
 - **waiter** or **shinycssloaders** - Loading indicators
 
-### AI Model Options
-1. **Anthropic Claude** - Recommended for following complex instructions, understanding context
-2. **OpenAI GPT-4** - Strong alternative with good structured output
-3. **Fallback strategy** - Allow configuration to switch between models
+### AI Model
+- **OpenAI ChatGPT 5.1** - Primary model for prompt processing and content generation
 
 ### Configuration Management
 - `.Renviron` file for API keys (git-ignored)
