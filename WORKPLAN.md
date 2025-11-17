@@ -2,170 +2,152 @@
 
 ## Project Summary
 
-**Goal**: An R-based tool that uses AI to assist nontechnical users in creating comprehensive event planning worksheets from templates.
+**Goal**: A Shiny web application that uses AI to assist nontechnical users in creating comprehensive event planning worksheets from Excel templates.
 
 **Target Users**: Individual contributors planning large events (convenings, conferences, workshops) who need structured planning support but lack technical expertise.
 
-**Core Value Proposition**: Transform a basic event template into a detailed, customized planning worksheet through conversational AI assistance, reducing planning overhead and ensuring nothing is overlooked.
+**Core Value Proposition**: Transform a basic Excel event template into a detailed, customized planning worksheet through AI assistance, reducing planning overhead and ensuring nothing is overlooked.
 
 ---
 
 ## Development Phases
 
-### Phase 1: Foundation & Core Functionality
+### Phase 1: Backend Core Functionality
 
-**Objective**: Build a minimal working prototype that can generate a basic event planning worksheet.
+**Objective**: Build the core R functions that power the tool - AI integration, template processing, and worksheet generation.
 
 #### Deliverables:
 1. **Project Structure**
    - `/config` - API keys, model settings, constants
    - `/R` - Main scripts and helper functions
-   - `/inputs` - Template files and example data
-   - `/outputs` - Generated worksheets
+   - `/inputs` - Example Excel templates
+   - `/outputs` - Generated worksheets (for testing)
    - `/tests` - Manual test cases and examples
 
-2. **Core Scripts**
-   - `config/dependencies.R` - Centralized package loading
-   - `config/settings.R` - API configuration, model parameters, output formats
+2. **Core R Functions**
+   - `config/dependencies.R` - Centralized package loading (shiny, openxlsx, httr2, dplyr, cli, etc.)
+   - `config/settings.R` - API configuration, model parameters, prompt templates
    - `R/api_client.R` - Functions to interact with AI model API
-   - `R/template_processor.R` - Load and parse event templates
-   - `R/worksheet_generator.R` - Main function to generate worksheets
-   - `R/output_formatter.R` - Format and export to CSV/Excel
+   - `R/template_processor.R` - Load and parse Excel templates
+   - `R/worksheet_generator.R` - Main logic to generate expanded worksheets
+   - `R/output_formatter.R` - Format and export to Excel with styling
 
-3. **Basic Template System**
-   - Define standard event planning template structure (e.g., timeline, budget, venue, attendees, logistics)
-   - Support CSV input templates
-   - Allow template customization via simple configuration
+3. **Excel Template System**
+   - Define expected template structure (columns: category, item, deadline_weeks_before, notes)
+   - Read Excel files using `openxlsx` or `readxl`
+   - Validate template format and provide helpful error messages
+   - Create 1-2 example templates (conference, workshop)
 
 4. **AI Integration**
-   - Connect to AI API (OpenAI, Anthropic, or similar)
-   - Implement basic prompt engineering to expand template sections
-   - Handle API errors gracefully with user-friendly messages
+   - Connect to AI API (Anthropic Claude recommended)
+   - Implement prompt engineering to expand template items with context
+   - Pass event details (name, date, attendee count, budget, type) to personalize output
+   - Handle API errors gracefully with fallback messages
 
-5. **Simple CLI Interface**
-   - One main function call: `generate_event_plan(template_path, event_details)`
-   - Accept basic event parameters (name, date, attendee count, budget range)
-   - Output progress messages with colored emojis
+5. **Testing with Scripts**
+   - Create test script that calls core functions directly
+   - Verify Excel input/output workflow works end-to-end
+   - Validate formatting, formulas, multi-sheet structure
 
 #### Success Criteria:
-- User can run single function with template path and basic event info
-- Tool generates a CSV with expanded planning items
-- Error messages are clear and actionable
-- Code follows all documented standards
+- Core functions can take Excel template + event details and generate expanded Excel worksheet
+- Output includes multiple sheets (Overview, Timeline, Budget, Logistics)
+- Error handling is robust and informative
+- Code follows all documented standards (tidyverse, clear naming, section structure)
 
 ---
 
-### Phase 2: Enhanced User Experience
+### Phase 2: Basic Shiny Interface
 
-**Objective**: Make the tool more accessible and flexible for diverse event types.
+**Objective**: Create a simple, functional web interface that allows users to upload templates and download generated worksheets.
 
 #### Deliverables:
-1. **Interactive Input Collection**
-   - Guided questions to gather event details
-   - Validate inputs and provide helpful prompts
-   - Save event profiles for reuse
+1. **UI Layout**
+   - Clean, single-page layout with logical sections
+   - File upload widget for Excel template
+   - Input fields for event details (name, date, attendee count, budget range, event type)
+   - Generate button
+   - Download button for completed worksheet
+   - Progress indicators during AI generation
 
-2. **Template Library**
-   - Pre-built templates for common event types:
-     - Multi-day conferences
-     - Single-day workshops
-     - Virtual/hybrid events
-     - Networking events
-     - Panel discussions
-   - Template selection helper function
+2. **Server Logic**
+   - Handle file upload and validate Excel format
+   - Collect user inputs and validate
+   - Call backend functions from Phase 1
+   - Display progress/status messages
+   - Provide download handler for Excel output
 
-3. **Excel Output Enhancements**
-   - Multi-sheet workbooks (Overview, Timeline, Budget, Logistics, etc.)
-   - Basic formatting (headers, colors, column widths)
-   - Formulas for budget calculations
+3. **Basic Error Handling**
+   - Clear error messages for invalid uploads
+   - API failure handling with user-friendly notifications
+   - Input validation feedback
 
-4. **Iterative Refinement**
-   - Allow user to review generated worksheet
-   - Function to regenerate specific sections
-   - Ability to add custom prompts for specific sections
+4. **Styling**
+   - Clean, professional appearance (bslib or shinydashboard)
+   - Responsive layout
+   - Bellwether branding (optional)
 
 #### Success Criteria:
-- Nontechnical user can generate plan without reading documentation
-- Output is well-formatted and immediately usable
-- Tool handles 5+ different event types effectively
+- Nontechnical user can upload template, fill in details, and download completed worksheet
+- Interface is intuitive without requiring documentation
+- Errors are displayed clearly with actionable guidance
+- App runs locally without issues
 
 ---
 
-### Phase 3: Intelligence & Customization
+### Phase 3: Enhanced UX & Features
 
-**Objective**: Add smarter AI assistance and personalization.
-
-#### Deliverables:
-1. **Context-Aware Suggestions**
-   - Use event type, size, and budget to tailor recommendations
-   - Incorporate best practices from event planning domain
-   - Flag potential issues (e.g., timeline conflicts, budget concerns)
-
-2. **Memory & Learning**
-   - Save user preferences (preferred vendors, typical timeline structures)
-   - Reference past events for consistency
-   - Build organizational knowledge base
-
-3. **Advanced Prompting**
-   - Section-specific prompt templates
-   - Allow users to specify tone/detail level
-   - Support for multi-step reasoning (e.g., "budget-conscious" vs "premium" event)
-
-4. **Validation & Quality Checks**
-   - Ensure all critical sections are populated
-   - Check for logical inconsistencies
-   - Provide completeness score
-
-#### Success Criteria:
-- Generated plans require minimal manual editing
-- Tool adapts to organization's planning style over time
-- Quality of output rivals experienced event planner
-
----
-
-### Phase 4: Collaboration & Integration
-
-**Objective**: Enable team collaboration and connect with existing tools.
+**Objective**: Polish the user experience and add features that make the tool more flexible and powerful.
 
 #### Deliverables:
-1. **Multi-User Support**
-   - Share templates and event profiles across team
-   - Version control for event plans
-   - Comment/annotation system
+1. **Template Library**
+   - Pre-loaded template options (conference, workshop, virtual event, networking event)
+   - Users can select from library OR upload custom template
+   - Template preview before generation
 
-2. **External Integrations** (Optional)
-   - Export to project management tools (Trello, Asana)
-   - Calendar integration for timeline items
-   - Budget tracking integration
+2. **Improved Input Experience**
+   - Event type dropdown with descriptions
+   - Date picker for event date
+   - Budget slider or range input
+   - Optional fields for venue type, audience, special requirements
+   - Tooltips/help text for each field
 
-3. **Reporting & Analytics**
-   - Compare actual vs. planned metrics
-   - Identify common planning gaps
-   - Generate post-event reports
+3. **Better Output Formatting**
+   - Conditional formatting in Excel (highlight deadlines, budget items)
+   - Auto-calculated formulas (budget totals, days until deadline)
+   - Professional styling (headers, colors, fonts)
+   - Include metadata sheet with generation details
 
-4. **Batch Processing**
-   - Generate multiple event plans from a queue
-   - Series/recurring event support
-   - Bulk template updates
+4. **Iterative Refinement (Optional)**
+   - Preview generated worksheet in-app
+   - Option to regenerate specific sections
+   - Custom instructions field for additional AI guidance
+
+5. **User Feedback**
+   - Satisfaction rating after generation
+   - Optional comments/suggestions
+   - Log usage for improvement insights
 
 #### Success Criteria:
-- Multiple team members can collaborate effectively
-- Tool integrates into existing workflows
-- Reduces overall event planning time by 40%+
+- Users can generate plans for 5+ event types using templates
+- Output requires minimal manual editing
+- Excel worksheets are professionally formatted and immediately usable
+- 80%+ user satisfaction rating
 
 ---
 
 ## Technical Stack (Proposed)
 
 ### Core Dependencies
-- **httr** or **httr2** - API communication
+- **shiny** - Web application framework
+- **bslib** or **shinydashboard** - UI theming and layout
+- **httr2** - API communication with AI service
 - **jsonlite** - JSON parsing for API responses
 - **dplyr**, **tidyr**, **purrr** - Data manipulation
-- **readr** - CSV reading/writing
-- **writexl** or **openxlsx** - Excel output with formatting
+- **openxlsx** - Excel reading/writing with formatting support (preferred over readxl/writexl for styling)
 - **glue** - String interpolation for prompts
-- **cli** - User-friendly console messages with colors/emojis
-- **rlang** - Error handling
+- **shinyWidgets** - Enhanced input widgets (optional)
+- **waiter** or **shinycssloaders** - Loading indicators
 
 ### AI Model Options
 1. **Anthropic Claude** - Recommended for following complex instructions, understanding context
@@ -173,106 +155,111 @@
 3. **Fallback strategy** - Allow configuration to switch between models
 
 ### Configuration Management
-- **dotenv** - Secure API key storage
+- `.Renviron` file for API keys (git-ignored)
 - Environment variables for sensitive data
-- YAML or JSON for user preferences (optional)
+- `config/settings.R` for app-level configurations
 
 ---
 
 ## Key Design Decisions
 
-### 1. Template-First Approach
-Rather than generating plans from scratch, start with structured templates. This:
+### 1. Excel-Based Templates
+Use Excel (.xlsx) files as both input templates and output format:
+- Familiar format for nontechnical users
+- Supports multi-sheet workbooks for organization
+- Allows formatting, formulas, and conditional styling
+- Easy to edit post-generation in Excel
+
+### 2. Template-First Approach
+Rather than generating plans from scratch, start with structured templates:
 - Ensures consistency across events
 - Makes output predictable and trustworthy
 - Allows organizations to encode their standards
 - Reduces AI hallucination risk
 
-### 2. Progressive Enhancement
-Each phase builds on the previous without breaking existing functionality:
-- Phase 1 users can continue using simple interface
-- Advanced features are opt-in
-- Maintain backward compatibility
+### 3. Shiny Web Interface
+Web-based UI instead of CLI or R package:
+- No R knowledge required for end users
+- Can be deployed to server for team access
+- Interactive, visual experience
+- Easier to add features like file upload/download
 
-### 3. Human-in-the-Loop
+### 4. Progressive Development
+Build backend functions first, then add UI:
+- Core logic can be tested independently
+- UI can iterate without touching backend
+- Easier to maintain and debug
+
+### 5. Human-in-the-Loop
 AI assists but doesn't replace human judgment:
-- Generated content is always reviewable
-- Easy to edit and regenerate sections
-- Flags uncertainties rather than guessing
-
-### 4. Transparent AI Usage
-- Show what the AI is doing (e.g., "🤖 Generating budget breakdown...")
-- Log prompts and responses (optional, for debugging)
-- Allow users to understand and trust the tool
+- Generated content is always downloadable for review
+- Users maintain full control over final worksheet
+- Clear about what AI is doing during generation
 
 ---
 
 ## Risk Mitigation
 
 ### Technical Risks
-- **API costs**: Implement token counting, budget limits, caching
-- **API reliability**: Graceful degradation, retry logic, offline templates
-- **Output quality**: Extensive prompt testing, validation checks, user feedback loops
+- **API costs**: Implement token counting, set reasonable limits, monitor usage
+- **API reliability**: Graceful error handling, retry logic with backoff, clear user messaging
+- **Output quality**: Extensive prompt testing, example templates, iterative refinement
+- **Excel compatibility**: Test across Excel versions (Office 365, 2019, 2016)
 
 ### User Adoption Risks
-- **Complexity**: Keep Phase 1 extremely simple, add features gradually
-- **Trust**: Provide examples, show generated vs. template comparison
-- **Customization**: Balance flexibility with simplicity
+- **Complexity**: Keep initial interface extremely simple (upload, fill form, download)
+- **Trust**: Provide example templates and outputs, show before/after comparison
+- **Template creation**: Clear documentation with examples of good template structure
 
 ### Data/Privacy Risks
-- **Sensitive information**: Document what gets sent to AI (no PII by default)
-- **API key security**: Clear .gitignore rules, environment variable guidance
+- **Sensitive information**: Document what gets sent to AI (template + basic event details only)
+- **API key security**: Use .Renviron (git-ignored), clear setup instructions
 - **Data retention**: Understand and document AI provider's data policies
+- **File uploads**: Ensure uploaded files aren't permanently stored on server
 
 ---
 
 ## Success Metrics
 
 ### Phase 1
-- Generate usable worksheet in < 5 minutes
-- User needs < 10 minutes to learn the tool
-- Zero manual errors in output formatting
+- Backend functions successfully generate Excel output from template + inputs
+- Output includes proper formatting and multiple sheets
+- Zero errors in test cases
+- Code passes manual review for standards compliance
 
 ### Phase 2
-- 80% of users find output "immediately usable" or "needs minor edits"
-- Support 5+ event types without code changes
-- Excel output requires no manual reformatting
+- Nontechnical user can complete workflow in < 5 minutes
+- No crashes or unhandled errors during normal use
+- Generated worksheet downloads successfully
+- Interface is self-explanatory (no documentation needed for basic use)
 
 ### Phase 3
-- Generated plans score 8/10 or higher for completeness
+- Support 5+ event types with pre-loaded templates
+- 80% of users rate output as "immediately usable" or "needs minor edits"
+- Excel output requires minimal post-generation formatting
 - Users report 30%+ time savings vs. manual planning
-- Tool adapts to user's organization within 3 uses
-
-### Phase 4
-- Enable team of 3+ to collaborate on event planning
-- Integrate with at least 1 external tool
-- Track metrics across 10+ events for insights
 
 ---
 
 ## Timeline Estimate
 
-**Phase 1**: 2-3 weeks
-- Week 1: Project setup, API integration, basic template system
-- Week 2: Core generation logic, output formatting
-- Week 3: Testing, documentation, polish
+**Phase 1: Backend Core Functionality**: 2-3 weeks
+- Week 1: Project setup, API integration, Excel template system
+- Week 2: Core generation logic, prompt engineering, output formatting
+- Week 3: Testing with scripts, refinement, documentation
 
-**Phase 2**: 2-4 weeks
-- Weeks 1-2: Interactive input, template library, Excel enhancements
-- Weeks 3-4: Iterative refinement features, extensive testing
+**Phase 2: Basic Shiny Interface**: 2-3 weeks
+- Week 1: UI layout, file upload/download, input forms
+- Week 2: Server logic, error handling, progress indicators
+- Week 3: Testing, styling, polish
 
-**Phase 3**: 3-4 weeks
-- Weeks 1-2: Context-aware suggestions, advanced prompting
-- Weeks 2-3: Memory/learning system, validation
-- Week 4: Integration and testing
+**Phase 3: Enhanced UX & Features**: 2-4 weeks
+- Weeks 1-2: Template library, improved inputs, better formatting
+- Weeks 3-4: Optional features (preview, refinement), testing, user feedback
 
-**Phase 4**: 4-6 weeks (scope-dependent)
-- Variable based on which integrations are pursued
-- Collaboration features: 2-3 weeks
-- External integrations: 1-2 weeks each
-- Analytics: 1-2 weeks
+**Total**: 6-10 weeks for complete build (assuming one person part-time)
 
-**Total**: 11-17 weeks for full build (assuming one person part-time)
+**Minimum Viable Product**: Phase 1 + basic Phase 2 (4-5 weeks)
 
 ---
 
@@ -280,70 +267,106 @@ AI assists but doesn't replace human judgment:
 
 ### Immediate Actions (Before Phase 1)
 1. **Research & Requirements**
-   - Review 3-5 existing event planning templates
-   - Interview 2-3 potential users about their workflow
-   - Evaluate AI model options (cost, capability, terms)
+   - Review 3-5 existing event planning templates (gather from team)
+   - Interview 2-3 potential users about their current workflow and pain points
+   - Evaluate AI model options (cost, capability, terms of service)
 
 2. **Technical Decisions**
-   - Select AI provider and model
-   - Choose Excel library (writexl vs openxlsx)
-   - Decide on template format (CSV, Excel, or both)
+   - Select AI provider and model (Anthropic Claude vs OpenAI GPT-4)
+   - Confirm openxlsx for Excel handling (supports formatting)
+   - Decide on Shiny UI framework (bslib vs shinydashboard)
 
 3. **Setup**
    - Get API key for chosen AI provider
-   - Create sample event template
-   - Draft example event details for testing
+   - Create .Renviron template with placeholder
+   - Create sample Excel event template with expected structure
+   - Draft example prompts for AI
 
 ### Questions to Answer
-- What's the average event planning timeline? (helps structure output)
+- What's the typical event planning timeline? (12 weeks? 6 months?)
 - What are the most common event types at Bellwether?
-- Are there existing templates that should be digitized?
-- What budget range are we targeting? (affects API cost strategy)
-- Will this be used individually or shared across a team? (affects Phase priority)
+- Are there existing event planning templates to digitize/reference?
+- What budget/volume are we targeting? (affects API cost strategy)
+- Will this be deployed on a server or just run locally?
 
 ---
 
-## Appendix: Example Workflow
+## Appendix: Example Workflows
 
-### End User Experience (Phase 1)
+### End User Experience (Phase 2+)
+
+1. **Launch the app**
+   ```r
+   # In R console or RStudio
+   shiny::runApp("app.R")
+   ```
+
+2. **In the browser**
+   - Upload Excel template (or select from pre-loaded templates)
+   - Fill in form:
+     - Event name: "Annual Research Symposium 2025"
+     - Event date: June 15, 2025
+     - Attendee count: 150
+     - Budget range: $25,000 - $30,000
+     - Event type: Conference
+   - Click "Generate Plan"
+   - Wait for AI processing (progress bar shows status)
+   - Click "Download" to get completed Excel worksheet
+
+3. **Review output**
+   - Open downloaded Excel file
+   - Review multiple sheets: Overview, Timeline, Budget, Logistics
+   - Make any manual edits as needed
+   - Share with team
+
+### Developer Experience (Testing Backend - Phase 1)
+
 ```r
-# Load dependencies
+# Load dependencies and functions
 source("config/dependencies.R")
 source("config/settings.R")
+source("R/api_client.R")
+source("R/template_processor.R")
+source("R/worksheet_generator.R")
+source("R/output_formatter.R")
 
-# Generate event plan
-plan <- generate_event_plan(
-  template = "inputs/conference_template.csv",
-  event_name = "Annual Research Symposium 2025",
-  event_date = "2025-06-15",
+# Test workflow
+template <- read_template("inputs/conference_template.xlsx")
+event_details <- list(
+  name = "Annual Research Symposium 2025",
+  date = "2025-06-15",
   attendee_count = 150,
   budget_range = "$25,000 - $30,000",
   event_type = "conference"
 )
 
-# Output saved to: outputs/Annual_Research_Symposium_2025_plan.xlsx
-# ✅ Event plan generated successfully!
+worksheet <- generate_worksheet(template, event_details)
+save_worksheet(worksheet, "outputs/test_output.xlsx")
+
+# ✅ Worksheet generated successfully!
 ```
 
-### Developer Experience (Adding new template)
-```r
-# 1. Create CSV template with required columns:
-#    - category (e.g., "Venue", "Catering", "Marketing")
-#    - item (e.g., "Book conference room")
-#    - deadline_weeks_before (e.g., 12)
-#    - notes (optional context for AI)
+### Creating Custom Template
 
-# 2. Save to inputs/my_template.csv
+1. **Create Excel file with these columns** (on first sheet):
+   - `category` - Section name (e.g., "Venue", "Catering", "Marketing")
+   - `item` - Task description (e.g., "Book conference room")
+   - `deadline_weeks_before` - Numeric value (e.g., 12 for 12 weeks before event)
+   - `notes` - Optional context for AI to expand upon
 
-# 3. Use it:
-plan <- generate_event_plan(
-  template = "inputs/my_template.csv",
-  # ... other params
-)
-```
+2. **Example rows**:
+   | category | item | deadline_weeks_before | notes |
+   |----------|------|----------------------|-------|
+   | Venue | Book conference room | 12 | Consider capacity, AV needs, accessibility |
+   | Catering | Select catering vendor | 8 | Get quotes from 3 vendors, check dietary options |
+   | Marketing | Design event website | 10 | Include registration form, agenda, speaker bios |
+
+3. **Save as** `inputs/my_custom_template.xlsx`
+
+4. **Upload in app** or place in template library folder
 
 ---
 
-**Document Version**: 1.0
+**Document Version**: 2.0
 **Last Updated**: 2025-11-17
-**Status**: Draft for review
+**Status**: Revised - Focused on Shiny app development
