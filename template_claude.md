@@ -2,7 +2,7 @@
 
 **Developer Profile:** Dev is an data science analyst that uses programming for data analyses as well as building tools for specific research-related contexts.
 
--   Programs in R (intermediate to advanced level) and Python (beginner to intermediate level), but has little experience publishing packages or building applications
+-   Programs in R (intermediate to advanced level) and Python (beginner to intermediate level), but has little experience publishing packages or building applications. IDE of choice is Positron.
 
 -   Prioritizes clear documentation, thoughtful UX, and maintainable code over clever solutions
 
