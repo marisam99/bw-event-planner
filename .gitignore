@@ -47,3 +47,11 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Project-specific
+# Ignore generated outputs but keep directory
+outputs/*
+!outputs/.gitkeep
+
+# Keep .Renviron template for reference
+!.Renviron.template
