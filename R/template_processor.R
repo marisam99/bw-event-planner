@@ -1,10 +1,6 @@
-# ============================================================================
 # template_processor.R
-# ============================================================================
-# Description: Load and parse Excel templates with validation
-# Author: Bellwether Analytics
-# Date: 2025-11-18
-# ============================================================================
+# Description: Load and parse Excel templates with validation. Reads Excel files, validates required columns, performs data type checks, and provides template discovery and analysis functions.
+# Output: Validated data frames, template summaries, filtered template subsets
 
 # ============================================================================
 # Template Reading Functions

@@ -1,10 +1,6 @@
-# ============================================================================
 # api_client.R
-# ============================================================================
-# Description: Functions to interact with OpenAI ChatGPT 5.1 API
-# Author: Bellwether Analytics
-# Date: 2025-11-18
-# ============================================================================
+# Description: Functions to interact with OpenAI ChatGPT 5.1 API. Handles API authentication, request formatting, error handling with retry logic, and batch processing of template items.
+# Output: API responses, expanded content strings, batch-processed data frames
 
 # ============================================================================
 # Main API Functions

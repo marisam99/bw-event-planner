@@ -1,10 +1,6 @@
-# ============================================================================
 # settings.R
-# ============================================================================
-# Description: API configuration, model parameters, and prompt templates
-# Author: Bellwether Analytics
-# Date: 2025-11-18
-# ============================================================================
+# Description: API configuration, model parameters, and prompt templates for OpenAI ChatGPT 5.1 integration. Defines required template columns, validation functions, and formatting constants.
+# Output: Configuration constants, helper functions, and success message
 
 # ============================================================================
 # API Configuration

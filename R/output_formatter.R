@@ -1,10 +1,6 @@
-# ============================================================================
 # output_formatter.R
-# ============================================================================
-# Description: Format and export worksheets to Excel with professional styling
-# Author: Bellwether Analytics
-# Date: 2025-11-18
-# ============================================================================
+# Description: Format and export worksheets to Excel with professional styling. Applies conditional formatting, creates multi-sheet workbooks, and handles Excel export with auto-formatting.
+# Output: Excel files (.xlsx) with formatted, multi-sheet workbooks
 
 # ============================================================================
 # Main Export Function

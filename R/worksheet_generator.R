@@ -1,10 +1,6 @@
-# ============================================================================
 # worksheet_generator.R
-# ============================================================================
-# Description: Main logic to generate expanded event planning worksheets
-# Author: Bellwether Analytics
-# Date: 2025-11-18
-# ============================================================================
+# Description: Main logic to generate expanded event planning worksheets. Orchestrates AI expansion, deadline calculation, and creation of multiple worksheet views (main, timeline, budget, metadata).
+# Output: List containing data frames for each worksheet view
 
 # ============================================================================
 # Main Generation Function

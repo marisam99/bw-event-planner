@@ -1,10 +1,6 @@
-# ============================================================================
 # test_workflow.R
-# ============================================================================
-# Description: Test script to verify end-to-end workflow
-# Author: Bellwether Analytics
-# Date: 2025-11-18
-# ============================================================================
+# Description: Comprehensive test suite to verify end-to-end workflow. Tests configuration, template reading, API connection, and full worksheet generation with and without AI expansion.
+# Output: Test results printed to console, example Excel files in outputs/
 
 # ============================================================================
 # Setup

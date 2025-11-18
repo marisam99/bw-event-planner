@@ -1,10 +1,6 @@
-# ============================================================================
 # create_example_templates.R
-# ============================================================================
-# Description: Script to create example Excel templates
-# Author: Bellwether Analytics
-# Date: 2025-11-18
-# ============================================================================
+# Description: Creates example Excel templates for conference and workshop events. Generates structured templates with categories, items, deadlines, and notes for testing and demonstration purposes.
+# Output: conference_template.xlsx and workshop_template.xlsx in inputs/
 
 # Load required package
 library(openxlsx)
