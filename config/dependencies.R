@@ -77,4 +77,20 @@ if (requireNamespace("waiter", quietly = TRUE)) {
 # ============================================================================
 library(cli)             # Command line interface helpers
 
+# ============================================================================
+# Helper Functions
+# ============================================================================
+
+# Load system prompt from text file
+load_system_prompt <- function(prompt_file = "config/system_prompt.txt") {
+  if (!file.exists(prompt_file)) {
+    stop("System prompt file not found: ", prompt_file)
+  }
+
+  prompt_text <- readLines(prompt_file, warn = FALSE)
+  prompt <- paste(prompt_text, collapse = " ")
+
+  return(prompt)
+}
+
 cli::cli_alert_success("All dependencies loaded successfully")

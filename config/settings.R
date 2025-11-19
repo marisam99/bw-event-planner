@@ -32,53 +32,59 @@ get_api_key <- function() {
 
 # Required columns in template Excel file
 REQUIRED_TEMPLATE_COLUMNS <- c(
-  "category",
-  "item",
-  "deadline_weeks_before",
-  "notes"
+  "Task",
+  "Deadline"
 )
 
 # Optional columns that can be included
 OPTIONAL_TEMPLATE_COLUMNS <- c(
-  "budget_estimate",
-  "responsible_party",
-  "priority"
+  "Category",
+  "Owner",
+  "Status",
+  "Existing Resources",
+  "Notes"
 )
+
+# Note: Category can be a column or inferred from section headers.
+# Section headers are typically styled/merged cells that group related tasks.
 
 # ============================================================================
 # Prompt Templates
 # ============================================================================
 
-# System prompt for AI assistant
-SYSTEM_PROMPT <- "You are an expert event planning assistant. Your role is to help expand and enhance event planning templates with detailed, actionable tasks and recommendations. You provide practical, professional advice based on event planning best practices. Keep your suggestions concrete, specific, and tailored to the event details provided."
+# System prompt for AI assistant (loaded from text file for easy editing)
+SYSTEM_PROMPT <- load_system_prompt()
 
 # Main prompt template for worksheet expansion
 # Uses glue syntax: {variable_name} for interpolation
 EXPANSION_PROMPT_TEMPLATE <- "
-I am planning an event and need help expanding my planning worksheet.
+I am planning an event and need help completing my planning worksheet.
 
 Event Details:
 - Event Name: {event_name}
 - Event Date: {event_date}
 - Number of Attendees: {attendee_count}
-- Budget Range: {budget_range}
+- Event Location: {event_location}
 - Event Type: {event_type}
 
-I have a planning task that needs expansion:
-
-Category: {category}
-Task: {item}
-Deadline: {deadline_weeks_before} weeks before event
-Context Notes: {notes}
+Planning Category: {category}
+Task: {task}
+Existing Resources: {existing_resources}
+Notes: {notes}
 
 Please provide:
-1. A detailed expansion of this task with 3-5 specific action items
-2. Key considerations or potential challenges
-3. Recommended resources or vendors to consider (if applicable)
-4. Estimated budget range for this task (if applicable)
+1. A realistic deadline date (format as MM/DD/YYYY) for when this task should be completed, working backwards from the event date
+2. Who should own this task (use role like 'Event Coordinator', 'Project Manager', 'Logistics Lead', etc.)
+3. 2-3 specific action items or sub-tasks
+4. Key considerations or potential challenges
 5. Any dependencies or prerequisites
 
-Format your response as structured text that can be easily added to a planning worksheet. Be concise but comprehensive.
+Format your response as:
+DEADLINE: [date]
+OWNER: [role]
+DETAILS: [expanded task information with action items, considerations, and dependencies]
+
+Be concise but thorough.
 "
 
 # Prompt for generating category summaries
@@ -156,7 +162,7 @@ BUDGET_RANGES <- c(
 
 # Validate event details
 validate_event_details <- function(event_details) {
-  required_fields <- c("name", "date", "attendee_count", "budget_range", "event_type")
+  required_fields <- c("name", "date", "attendee_count", "location", "event_type")
 
   missing_fields <- setdiff(required_fields, names(event_details))
 
@@ -179,13 +185,6 @@ validate_event_details <- function(event_details) {
 # Format prompt with event details
 format_prompt <- function(template, ...) {
   glue::glue(template, ...)
-}
-
-# Calculate actual deadline date
-calculate_deadline_date <- function(event_date, weeks_before) {
-  event_date <- as.Date(event_date)
-  deadline_date <- event_date - (weeks_before * 7)
-  return(deadline_date)
 }
 
 # ============================================================================

@@ -75,32 +75,38 @@ validate_template <- function(template_data) {
   }
 
   # Validate data types
-  # deadline_weeks_before must be numeric
-  if (!is.numeric(template_data$deadline_weeks_before)) {
-    cli::cli_alert_warning("Converting deadline_weeks_before to numeric")
-    template_data$deadline_weeks_before <- as.numeric(template_data$deadline_weeks_before)
-  }
-
-  # Check for NAs in critical columns
-  critical_cols <- c("category", "item", "deadline_weeks_before")
-
-  for (col in critical_cols) {
-    na_count <- sum(is.na(template_data[[col]]))
-    if (na_count > 0) {
-      cli::cli_alert_warning("{na_count} rows have missing {col} values")
+  # Deadline should be date or character (will be processed by AI if empty)
+  if ("Deadline" %in% names(template_data)) {
+    if (!inherits(template_data$Deadline, "Date") && !is.character(template_data$Deadline)) {
+      cli::cli_alert_info("Converting Deadline column to character format")
+      template_data$Deadline <- as.character(template_data$Deadline)
     }
   }
 
-  # Remove rows where all critical columns are NA
+  # Check for NAs in critical columns
+  critical_cols <- c("Task", "Deadline")
+
+  for (col in critical_cols) {
+    if (col %in% names(template_data)) {
+      na_count <- sum(is.na(template_data[[col]]) | template_data[[col]] == "")
+      if (na_count > 0) {
+        cli::cli_alert_warning("{na_count} rows have missing {col} values")
+      }
+    }
+  }
+
+  # Remove rows where both critical columns are NA/empty
   template_data <- template_data[
-    !(is.na(template_data$category) &
-      is.na(template_data$item) &
-      is.na(template_data$deadline_weeks_before)),
+    !(is.na(template_data$Task) | template_data$Task == "") |
+    !(is.na(template_data$Deadline) | template_data$Deadline == ""),
   ]
 
-  # Fill NA notes with empty string
-  if ("notes" %in% names(template_data)) {
-    template_data$notes[is.na(template_data$notes)] <- ""
+  # Fill NA optional columns with empty string
+  if ("Notes" %in% names(template_data)) {
+    template_data$Notes[is.na(template_data$Notes)] <- ""
+  }
+  if ("Existing Resources" %in% names(template_data)) {
+    template_data$`Existing Resources`[is.na(template_data$`Existing Resources`)] <- ""
   }
 
   # Add row IDs for tracking
@@ -108,11 +114,21 @@ validate_template <- function(template_data) {
 
   # Summary statistics
   n_rows <- nrow(template_data)
-  n_categories <- length(unique(template_data$category))
+  n_categories <- if ("Category" %in% names(template_data)) {
+    length(unique(template_data$Category[!is.na(template_data$Category)]))
+  } else {
+    0
+  }
 
-  cli::cli_alert_success(
-    "Template validated: {n_rows} items across {n_categories} categories"
-  )
+  if (n_categories > 0) {
+    cli::cli_alert_success(
+      "Template validated: {n_rows} items across {n_categories} categories"
+    )
+  } else {
+    cli::cli_alert_success(
+      "Template validated: {n_rows} items"
+    )
+  }
 
   return(template_data)
 }
@@ -129,14 +145,18 @@ validate_template <- function(template_data) {
 #' @export
 get_template_summary <- function(template_data) {
 
+  has_category <- "Category" %in% names(template_data)
+
   summary_stats <- list(
     total_items = nrow(template_data),
-    n_categories = length(unique(template_data$category)),
-    categories = unique(template_data$category),
-    earliest_deadline = max(template_data$deadline_weeks_before, na.rm = TRUE),
-    latest_deadline = min(template_data$deadline_weeks_before, na.rm = TRUE),
-    items_by_category = table(template_data$category)
+    has_category = has_category
   )
+
+  if (has_category) {
+    summary_stats$n_categories <- length(unique(template_data$Category[!is.na(template_data$Category)]))
+    summary_stats$categories <- unique(template_data$Category[!is.na(template_data$Category)])
+    summary_stats$items_by_category <- table(template_data$Category)
+  }
 
   return(summary_stats)
 }
@@ -153,12 +173,15 @@ print_template_summary <- function(template_data) {
   cli::cli_h2("Template Summary")
 
   cli::cli_alert_info("Total Items: {summary$total_items}")
-  cli::cli_alert_info("Categories: {summary$n_categories}")
-  cli::cli_alert_info("Timeline: {summary$latest_deadline} to {summary$earliest_deadline} weeks before event")
 
-  cli::cli_h3("Items by Category")
-  for (cat in names(summary$items_by_category)) {
-    cli::cli_li("{cat}: {summary$items_by_category[cat]} items")
+  if (summary$has_category) {
+    cli::cli_alert_info("Categories: {summary$n_categories}")
+    cli::cli_h3("Items by Category")
+    for (cat in names(summary$items_by_category)) {
+      cli::cli_li("{cat}: {summary$items_by_category[cat]} items")
+    }
+  } else {
+    cli::cli_alert_info("No category information in template")
   }
 }
 
@@ -170,22 +193,30 @@ print_template_summary <- function(template_data) {
 #' @return Data frame filtered to specified category
 #' @export
 get_items_by_category <- function(template_data, category) {
-  template_data[template_data$category == category, ]
+  if (!"Category" %in% names(template_data)) {
+    stop("Template does not have a Category column")
+  }
+  template_data[template_data$Category == category & !is.na(template_data$Category), ]
 }
 
-#' Get items by deadline range
+#' Get items by deadline date range
 #'
 #' @param template_data Data frame with template data
-#' @param min_weeks Minimum weeks before event
-#' @param max_weeks Maximum weeks before event
+#' @param start_date Start date (Date or character)
+#' @param end_date End date (Date or character)
 #'
 #' @return Data frame filtered to deadline range
 #' @export
-get_items_by_deadline <- function(template_data, min_weeks, max_weeks) {
-  template_data[
-    template_data$deadline_weeks_before >= min_weeks &
-    template_data$deadline_weeks_before <= max_weeks,
-  ]
+get_items_by_deadline_range <- function(template_data, start_date, end_date) {
+  if (!"Deadline" %in% names(template_data)) {
+    stop("Template does not have a Deadline column")
+  }
+
+  start_date <- as.Date(start_date)
+  end_date <- as.Date(end_date)
+
+  deadlines <- as.Date(template_data$Deadline)
+  template_data[!is.na(deadlines) & deadlines >= start_date & deadlines <= end_date, ]
 }
 
 # ============================================================================
