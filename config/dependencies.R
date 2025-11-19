@@ -3,6 +3,36 @@
 # Output: Loaded packages and success message
 
 # ============================================================================
+# Package Check
+# ============================================================================
+
+# Required packages
+required_packages <- c(
+  "shiny",
+  "bslib",
+  "dplyr",
+  "tidyr",
+  "purrr",
+  "openxlsx",
+  "httr2",
+  "jsonlite",
+  "glue",
+  "cli"
+)
+
+# Check for missing packages
+missing_packages <- required_packages[!sapply(required_packages, requireNamespace, quietly = TRUE)]
+
+if (length(missing_packages) > 0) {
+  stop(
+    "\n❌ Missing required packages: ", paste(missing_packages, collapse = ", "),
+    "\n\n📦 Install them with:\n",
+    "install.packages(c(", paste0("\"", missing_packages, "\"", collapse = ", "), "))",
+    "\n"
+  )
+}
+
+# ============================================================================
 # Core Shiny packages
 # ============================================================================
 library(shiny)           # Web application framework
