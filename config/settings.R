@@ -38,22 +38,22 @@ REQUIRED_TEMPLATE_COLUMNS <- c(
 
 # Optional columns that can be included
 OPTIONAL_TEMPLATE_COLUMNS <- c(
+  "Category",
   "Owner",
   "Status",
   "Existing Resources",
   "Notes"
 )
 
-# Note: Categories are inferred from section headers in the template,
-# not from a column. Section headers are typically styled/merged cells
-# that group related tasks together.
+# Note: Category can be a column or inferred from section headers.
+# Section headers are typically styled/merged cells that group related tasks.
 
 # ============================================================================
 # Prompt Templates
 # ============================================================================
 
-# System prompt for AI assistant
-SYSTEM_PROMPT <- "You are an expert event planning assistant. Your role is to help complete and enhance event planning worksheets with realistic deadlines, task ownership, and detailed recommendations. You provide practical, professional advice based on event planning best practices. Always provide specific dates and concrete, actionable suggestions."
+# System prompt for AI assistant (loaded from text file for easy editing)
+SYSTEM_PROMPT <- load_system_prompt()
 
 # Main prompt template for worksheet expansion
 # Uses glue syntax: {variable_name} for interpolation

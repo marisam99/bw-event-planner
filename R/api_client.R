@@ -97,8 +97,8 @@ call_chatgpt_api <- function(prompt,
 
 #' Expand a single template item using AI
 #'
-#' @param item List containing category, item, deadline_weeks_before, notes
-#' @param event_details List containing event information
+#' @param item List containing Task, Deadline, and optionally Category, Notes, Existing Resources
+#' @param event_details List containing event information (name, date, location, attendee_count, event_type)
 #'
 #' @return Character string with expanded content
 #' @export
@@ -110,12 +110,12 @@ expand_template_item <- function(item, event_details) {
     event_name = event_details$name,
     event_date = event_details$date,
     attendee_count = event_details$attendee_count,
-    budget_range = event_details$budget_range,
+    event_location = event_details$location,
     event_type = event_details$event_type,
-    category = item$category,
-    item = item$item,
-    deadline_weeks_before = item$deadline_weeks_before,
-    notes = ifelse(is.na(item$notes) || item$notes == "", "No additional context", item$notes)
+    category = ifelse(is.null(item$Category) || is.na(item$Category), "General", item$Category),
+    task = item$Task,
+    existing_resources = ifelse(is.null(item$`Existing Resources`) || is.na(item$`Existing Resources`) || item$`Existing Resources` == "", "None specified", item$`Existing Resources`),
+    notes = ifelse(is.null(item$Notes) || is.na(item$Notes) || item$Notes == "", "No additional context", item$Notes)
   )
 
   # Call API
@@ -202,18 +202,19 @@ expand_template_items_batch <- function(items, event_details, progress = NULL) {
     tryCatch({
       items$expanded_content[i] <- expand_template_item(
         list(
-          category = items$category[i],
-          item = items$item[i],
-          deadline_weeks_before = items$deadline_weeks_before[i],
-          notes = items$notes[i]
+          Category = items$Category[i],
+          Task = items$Task[i],
+          Deadline = items$Deadline[i],
+          `Existing Resources` = items$`Existing Resources`[i],
+          Notes = items$Notes[i]
         ),
         event_details
       )
 
-      cli::cli_alert_success("Expanded: {items$item[i]}")
+      cli::cli_alert_success("Expanded: {items$Task[i]}")
 
     }, error = function(e) {
-      cli::cli_alert_warning("Failed to expand '{items$item[i]}': {conditionMessage(e)}")
+      cli::cli_alert_warning("Failed to expand '{items$Task[i]}': {conditionMessage(e)}")
       items$expanded_content[i] <<- paste("Error:", conditionMessage(e))
     })
 
